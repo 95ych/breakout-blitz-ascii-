@@ -3,7 +3,6 @@ import utilities
 import random
 import config
 import objects
-
 from time import time, sleep
 import signal
 from getch import KBHit
@@ -13,52 +12,53 @@ import inputs
 
 
 utilities.initialize_board()
-
+timetrack = time()
 while True:
+     if time() - timetrack >= 0.04:
+        timetrack = time()
+        # global_var.TIME_REM = global_var.TIME_TOTAL - round(time()) + global_var.TIME_BEGUN
+        # if global_var.TIME_REM == 0:
+        #     message = "Time over!"
+        #     break
 
-    # global_var.TIME_REM = global_var.TIME_TOTAL - round(time()) + global_var.TIME_BEGUN
-    # if global_var.TIME_REM == 0:
-    #     message = "Time over!"
-    #     break
+        utilities.initialize_board()
+        paddle.clear()
 
-    utilities.initialize_board()
-    paddle.clear()
+        inputs.movedin()
+        #paddle.check_collision()
 
-    inputs.movedin()
-    #paddle.check_collision()
+        # global_funct.gravity(mando)
+        # global_funct.move_bullets(bullets)
 
-    # global_funct.gravity(mando)
-    # global_funct.move_bullets(bullets)
+        # global_var.mp.magnet_check(global_var.magnets)
 
-    # global_var.mp.magnet_check(global_var.magnets)
+        # if time() - global_var.LAST_TIME > global_var.mp.get_speed():
+        #     if mando.get_dragon_flag() == 1:
+        #         mando.change_shape()
+        #     global_funct.mag_reset()
+        #     if global_var.mp.get_magnet_flag() == 1:
+        #         move_with_magnet(mando)
+        #     else:
+        #         move_board_back()
 
-    # if time() - global_var.LAST_TIME > global_var.mp.get_speed():
-    #     if mando.get_dragon_flag() == 1:
-    #         mando.change_shape()
-    #     global_funct.mag_reset()
-    #     if global_var.mp.get_magnet_flag() == 1:
-    #         move_with_magnet(mando)
-    #     else:
-    #         move_board_back()
+        #     mando.check_collision()
+        #     global_var.LAST_TIME = time()
+        #     dragon.drag_bullets_move(dragon_bullets)
+        #     mando.check_collision()
 
-    #     mando.check_collision()
-    #     global_var.LAST_TIME = time()
-    #     dragon.drag_bullets_move(dragon_bullets)
-    #     mando.check_collision()
+        # dragon.clear()
 
-    # dragon.clear()
+        # if global_var.mp.start_index >= 970:
+        #     dragon.set_pos_to_mando(mando)      
+        #     dragon.bullet_col(bullets)
 
-    # if global_var.mp.start_index >= 970:
-    #     dragon.set_pos_to_mando(mando)      
-    #     dragon.bullet_col(bullets)
+        #     if time() - dragon.get_bullet_time() > dragon.get_bullet_speed():
+        #         dragon.throw_bullet(dragon_bullets)
+            
+        # if global_var.mp.start_index == 1000:
+        #     mando.bullet_col(dragon_bullets)
 
-    #     if time() - dragon.get_bullet_time() > dragon.get_bullet_speed():
-    #         dragon.throw_bullet(dragon_bullets)
-        
-    # if global_var.mp.start_index == 1000:
-    #     mando.bullet_col(dragon_bullets)
-
-    # mando.render()
-    # dragon.render()
-    # global_funct.print_board()
-    paddle.render()
+        # mando.render()
+        # dragon.render()
+        # global_funct.print_board()
+        paddle.render()
