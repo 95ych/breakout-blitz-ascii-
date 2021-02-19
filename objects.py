@@ -47,8 +47,8 @@ class Paddle(Object):
 
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
-        self.__bullet_speed = 3
-        self.__lives = 5
+        self._score = 0
+        self.__lives = 3
         self.__bullet_time = 0
     
     def get_width(self):
@@ -120,7 +120,7 @@ class Ball(Object):
 
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
-        self._xspeed = 0.3
+        self._xspeed = 1
         self._yspeed = 1
     
 
@@ -129,7 +129,7 @@ class Ball(Object):
         if self._posy >= 19:
             self._yspeed = -self._yspeed
             
-        if self._posy <= 3:
+        if self._posy <= 0:
             self._yspeed = -self._yspeed
         if global_var.mp.matrix[int(self._posy)][int(self._posx)] == config.paddle[0][0]:
             self._yspeed = -self._yspeed
@@ -171,14 +171,21 @@ class Brick(Object):
         
     def check_collision(self):
         if self._lives!=0:
+            
+            for i in range(-1,2):
+                if (global_var.mp.matrix[self._posy+i][self._posx-1] == config.ball[0][0] and global_var.ball._xspeed >0) or (global_var.mp.matrix[self._posy+i][self._posx+self._width] == config.ball[0][0] and global_var.ball._xspeed <0): 
+                    self._lives -= 1
+                    global_var.paddle._score+=1
+                    self.renderex()
+                    global_var.ball._xspeed = -global_var.ball._xspeed
+            
             for i in range(self._width):
+                #if global_var.mp.matrix[self._posy][i+self._posx] == global_var.ball[0][0]:
                 if global_var.mp.matrix[self._posy+1][i+self._posx] == config.ball[0][0] or global_var.mp.matrix[self._posy-1][i+self._posx] == config.ball[0][0]:
                     self._lives -= 1
+                    global_var.paddle._score+=1
                     self.renderex()
                     global_var.ball._yspeed = -global_var.ball._yspeed
             
-            if (global_var.mp.matrix[self._posy][self._posx-1]  == config.ball[0][0] and global_var.ball._xspeed >0)  or (global_var.mp.matrix[self._posy][self._posx+self._width] == config.ball[0][0] and global_var.ball._xspeed <0):
-                self._lives -= 1
-                self.renderex()
-                global_var.ball._xspeed = -global_var.ball._xspeed
+            
         

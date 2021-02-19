@@ -6,9 +6,9 @@ from colorama import init, Fore, Back, Style
 from math import pi
 import numpy as np 
 
-MAXY_SPEED =1
-MAXX_SPEED = 1
-columns = 80
+MAXY_SPEED =2
+MAXX_SPEED = 2
+columns = 70
 rows = 20
 paddle = [['_','_','_','_','_','_']]
 #ball = [['*']]
