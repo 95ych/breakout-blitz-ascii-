@@ -4,7 +4,7 @@ import config
 from time import time,sleep
 import random
 from colorama import Fore,Back,Style
-
+from numpy import inf
 class Object():
     
     def __init__(self, character, x, y):
@@ -17,8 +17,8 @@ class Object():
     def render(self):
         for i in range(self._width):
             for j in range(self._height):
-                if global_var.mp.matrix[j+self._posy][i+self._posx] == " ":
-                    global_var.mp.matrix[j+self._posy][i+self._posx] = self._shape[j][i]
+                if global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] == Back.BLACK + " ":
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = self._shape[j][i]
 
     def xget(self):
         return self._posx
@@ -33,15 +33,15 @@ class Object():
         self._posy = x
 
     def xmove(self, x):
-        self._posx += x
+        self._posx = x+self._posx
     
     def ymove(self, x):
-        self._posy += x
+        self._posy = x+ self._posy
 
     def clear(self):
         for i in range(self._width):
             for j in range(self._height):
-                global_var.mp.matrix[j+self._posy][i+self._posx] = " "
+                global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.BLACK + " "
 
 class Paddle(Object):
 
@@ -53,10 +53,7 @@ class Paddle(Object):
     
     def get_width(self):
         return self._width
-
-    def get_height(self):
-        return self._height
-
+    
     # def print_lives(self):
     #     i = 10 - 2*self.__lives        
     #     while i > 0:
@@ -123,7 +120,7 @@ class Ball(Object):
 
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
-        self._xspeed = 1
+        self._xspeed = 0.3
         self._yspeed = 1
     
 
@@ -134,31 +131,54 @@ class Ball(Object):
             
         if self._posy <= 3:
             self._yspeed = -self._yspeed
-        if global_var.mp.matrix[self._posy][self._posx] == "_":
+        if global_var.mp.matrix[int(self._posy)][int(self._posx)] == config.paddle[0][0]:
             self._yspeed = -self._yspeed
-        if self._posx < global_var.mp.start_index + 4:
+            self._xspeed = self._xspeed + (self._posx - global_var.paddle._posx - int(global_var.paddle.get_width()/2))*0.3
+            if self._xspeed > config.MAXX_SPEED:
+                self._xspeed = config.MAXX_SPEED 
+        if self._posx < global_var.mp.start_index + 1:
             self._xspeed = -self._xspeed
         if self._posx > global_var.mp.start_index + config.columns -4:
             self._xspeed = -self._xspeed
 
 class Brick(Object):
 
-    def __init__(self, character ,x, y):
+    def __init__(self, character ,x, y, lives):
         super().__init__(character, x, y)
         #self._xspeed = 0
-        #self._lives = random.randint(1,3)
-        self._lives = 1    
+        self._lives = lives
+        #self._lives = 1    
+    
+    def renderex(self):    
+        if self._lives == 3:
+            for i in range(self._width):
+                for j in range(self._height):
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.RED + self._shape[j][i]
+        elif self._lives == 2:
+            for i in range(self._width):
+                for j in range(self._height):
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.MAGENTA + self._shape[j][i]
+        elif self._lives == 1:
+            for i in range(self._width):
+                for j in range(self._height):
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.YELLOW + self._shape[j][i]
+        elif self._lives == inf:
+            for i in range(self._width):
+                for j in range(self._height):
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.WHITE + self._shape[j][i]
+        elif self._lives == 0:
+            self.clear()
+        
     def check_collision(self):
         if self._lives!=0:
             for i in range(self._width):
-                for j in range(self._height):
-                
-                    if global_var.mp.matrix[j+self._posy][i+self._posx] == "*":
-                        self._lives -= 1
-                        global_var.ball._yspeed = -global_var.ball._yspeed
-    def render(self):
-        if self._lives != 0:
-            for i in range(self._width):
-                for j in range(self._height):
-                    if global_var.mp.matrix[j+self._posy][i+self._posx] == " ":
-                        global_var.mp.matrix[j+self._posy][i+self._posx] = self._shape[j][i]
+                if global_var.mp.matrix[self._posy+1][i+self._posx] == config.ball[0][0] or global_var.mp.matrix[self._posy-1][i+self._posx] == config.ball[0][0]:
+                    self._lives -= 1
+                    self.renderex()
+                    global_var.ball._yspeed = -global_var.ball._yspeed
+            
+            if (global_var.mp.matrix[self._posy][self._posx-1]  == config.ball[0][0] and global_var.ball._xspeed >0)  or (global_var.mp.matrix[self._posy][self._posx+self._width] == config.ball[0][0] and global_var.ball._xspeed <0):
+                self._lives -= 1
+                self.renderex()
+                global_var.ball._xspeed = -global_var.ball._xspeed
+        

@@ -13,6 +13,9 @@ import inputs
 
 utilities.initialize_board()
 timetrack = time()
+for brick in bricks:
+    brick.renderex()
+
 while True:
     # setting 25 fps
      if time() - timetrack >= 0.1:
@@ -21,7 +24,7 @@ while True:
         # if global_var.TIME_REM == 0:
         #     message = "Time over!"
         #     break
-
+        
         utilities.initialize_board()
         paddle.clear()
         ball.clear()
@@ -66,11 +69,9 @@ while True:
         # mando.render()
         # dragon.render()
         # global_funct.print_board()
-        for brick in bricks:
-            brick.clear()
         
         ball.render()
-        
         for brick in bricks:
             brick.check_collision()
-            brick.render()
+        
+            

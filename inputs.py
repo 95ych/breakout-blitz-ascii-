@@ -17,7 +17,7 @@ def movedin():
             paddle.xmove(3)
 
     if char == 'a':
-        if paddle.xget() > global_var.mp.start_index + 4:
+        if paddle.xget() > global_var.mp.start_index + 1:
             paddle.xmove(-3)
 
     # if char == 'w':
