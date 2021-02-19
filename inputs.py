@@ -13,9 +13,10 @@ def movedin():
     char = kb.getinput()
 
     if char == 'd':
-        if paddle.xget() <= global_var.mp.start_index + config.columns - 4 - paddle.get_width() and paddle.xget() <= 1090:
+        if paddle.xget() <= global_var.mp.start_index + config.columns  -3- paddle.get_width() and paddle.xget() <= 1090:
             paddle.xmove(3)
-
+        elif paddle.xget() >= global_var.mp.start_index + config.columns  -3- paddle.get_width() and paddle.xget() <= global_var.mp.start_index + config.columns -1- paddle.get_width(): 
+            paddle.xmove(1)
     if char == 'a':
         if paddle.xget() > global_var.mp.start_index + 1:
             paddle.xmove(-3)

@@ -48,7 +48,7 @@ class Paddle(Object):
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
         self._score = 0
-        self.__lives = 3
+        self._lives = 3
         self.__bullet_time = 0
     
     def get_width(self):
@@ -120,7 +120,7 @@ class Ball(Object):
 
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
-        self._xspeed = 1
+        self._xspeed = 0.3
         self._yspeed = 1
     
 
@@ -128,7 +128,7 @@ class Ball(Object):
 
         if self._posy >= 19:
             self._yspeed = -self._yspeed
-            
+            global_var.paddle._lives-=1
         if self._posy <= 0:
             self._yspeed = -self._yspeed
         if global_var.mp.matrix[int(self._posy)][int(self._posx)] == config.paddle[0][0]:
@@ -138,7 +138,7 @@ class Ball(Object):
                 self._xspeed = config.MAXX_SPEED 
         if self._posx < global_var.mp.start_index + 1:
             self._xspeed = -self._xspeed
-        if self._posx > global_var.mp.start_index + config.columns -4:
+        if self._posx > global_var.mp.start_index + config.columns-1:
             self._xspeed = -self._xspeed
 
 class Brick(Object):

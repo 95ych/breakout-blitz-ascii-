@@ -15,7 +15,8 @@ class Map(object):
         self.matrix = np.full((self.height, self.width),Back.BLACK+ " ")
         self.timestart = time.time()
     def render(self):
-        print("Time :" + str(int(time.time() - self.timestart)))
+        print("Time :" + str(int(time.time() - self.timestart))+" "*20+"Lives: "+str(global_var.paddle._lives)+" "*20 +"Score: " + str(global_var.paddle._score) )
+        print(Back.WHITE+" "*(config.columns+2)+ Back.RESET)
         for y in range(self.height):
             pr = [Back.WHITE+ " "]
             for x in range(self.start_index, self.start_index + config.columns):    
