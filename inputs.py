@@ -14,11 +14,11 @@ def movedin():
 
     if char == 'd':
         if paddle.xget() <= global_var.mp.start_index + config.columns - 4 - paddle.get_width() and paddle.xget() <= 1090:
-            paddle.xmove(1)
+            paddle.xmove(3)
 
     if char == 'a':
         if paddle.xget() > global_var.mp.start_index + 4:
-            paddle.xmove(-1)
+            paddle.xmove(-3)
 
     # if char == 'w':
     #     if mando.yget() >= 5:

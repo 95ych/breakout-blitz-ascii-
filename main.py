@@ -6,7 +6,7 @@ import objects
 from time import time, sleep
 import signal
 from getch import KBHit
-from global_var import paddle
+from global_var import paddle, ball, bricks
 #from global_funct import remove_shield, allow_shield, move_board_back, check_speedup_time, move_with_magnet
 import inputs 
 
@@ -14,7 +14,8 @@ import inputs
 utilities.initialize_board()
 timetrack = time()
 while True:
-     if time() - timetrack >= 0.04:
+    # setting 25 fps
+     if time() - timetrack >= 0.1:
         timetrack = time()
         # global_var.TIME_REM = global_var.TIME_TOTAL - round(time()) + global_var.TIME_BEGUN
         # if global_var.TIME_REM == 0:
@@ -23,9 +24,13 @@ while True:
 
         utilities.initialize_board()
         paddle.clear()
-
+        ball.clear()
         inputs.movedin()
-        #paddle.check_collision()
+        paddle.render()
+        ball.check_collision()
+        ball.ymove(-ball._yspeed)
+        ball.xmove(ball._xspeed)
+        
 
         # global_funct.gravity(mando)
         # global_funct.move_bullets(bullets)
@@ -61,4 +66,11 @@ while True:
         # mando.render()
         # dragon.render()
         # global_funct.print_board()
-        paddle.render()
+        for brick in bricks:
+            brick.clear()
+        
+        ball.render()
+        
+        for brick in bricks:
+            brick.check_collision()
+            brick.render()

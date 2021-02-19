@@ -20,7 +20,6 @@ class Object():
                 if global_var.mp.matrix[j+self._posy][i+self._posx] == " ":
                     global_var.mp.matrix[j+self._posy][i+self._posx] = self._shape[j][i]
 
-
     def xget(self):
         return self._posx
 
@@ -57,18 +56,7 @@ class Paddle(Object):
 
     def get_height(self):
         return self._height
-        
-    def render(self):
-        for i in range(self._width):
-            for j in range(self._height):
-                if global_var.mp.matrix[j+self._posy][i+self._posx] == " ":
-                    global_var.mp.matrix[j+self._posy][i+self._posx] = self._shape[j][i]
 
-    def clear(self):
-        for i in range(self._width):
-            for j in range(self._height):
-                global_var.mp.matrix[j+self._posy][i+self._posx] = " "
-    
     # def print_lives(self):
     #     i = 10 - 2*self.__lives        
     #     while i > 0:
@@ -130,3 +118,47 @@ class Paddle(Object):
     #     drag_bullet.render()
     #     dragon_bullets.append(drag_bullet)
     #     self.set_bullet_time(time())
+
+class Ball(Object):
+
+    def __init__(self, character ,x, y):
+        super().__init__(character, x, y)
+        self._xspeed = 1
+        self._yspeed = 1
+    
+
+    def check_collision(self):
+
+        if self._posy >= 19:
+            self._yspeed = -self._yspeed
+            
+        if self._posy <= 3:
+            self._yspeed = -self._yspeed
+        if global_var.mp.matrix[self._posy][self._posx] == "_":
+            self._yspeed = -self._yspeed
+        if self._posx < global_var.mp.start_index + 4:
+            self._xspeed = -self._xspeed
+        if self._posx > global_var.mp.start_index + config.columns -4:
+            self._xspeed = -self._xspeed
+
+class Brick(Object):
+
+    def __init__(self, character ,x, y):
+        super().__init__(character, x, y)
+        #self._xspeed = 0
+        #self._lives = random.randint(1,3)
+        self._lives = 1    
+    def check_collision(self):
+        if self._lives!=0:
+            for i in range(self._width):
+                for j in range(self._height):
+                
+                    if global_var.mp.matrix[j+self._posy][i+self._posx] == "*":
+                        self._lives -= 1
+                        global_var.ball._yspeed = -global_var.ball._yspeed
+    def render(self):
+        if self._lives != 0:
+            for i in range(self._width):
+                for j in range(self._height):
+                    if global_var.mp.matrix[j+self._posy][i+self._posx] == " ":
+                        global_var.mp.matrix[j+self._posy][i+self._posx] = self._shape[j][i]

@@ -8,8 +8,9 @@ from time import time
 
 
 def create_header():
-    print("\033[2;1H" + Fore.WHITE + Back.BLUE + Style.BRIGHT)
-    print(Style.RESET_ALL)
+    print("\033[%d;%dH" % (0, 0), end='')
+    #print("\033[2;1H" + Fore.WHITE + Back.BLUE + Style.BRIGHT)
+    #print(Style.RESET_ALL)
 
 def print_board():
     create_header()
@@ -71,5 +72,6 @@ def create_board():
         # x += random.randint(20, 50)
 
 def initialize_board():
-    global_var.paddle.render()
+    init()
+    os.system('clear')
     print_board()
