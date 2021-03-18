@@ -5,7 +5,7 @@ import global_var
 from colorama import init, Fore, Back, Style
 import objects
 from time import time
-
+from numpy import inf
 
 def create_header():
     print("\033[%d;%dH" % (0, 0), end='')
@@ -19,59 +19,66 @@ def print_board():
 def display_ending(message):
     os.system('tput reset')
    
-
-def create_board():
-
-    i = 1
-    x = 10
-
-    
-    while x < global_var.mp.width - 250:
-
-        no = random.randint(0, 3)
-        y = random.randint(10, global_var.mp.height-15)
-        
-        # #beams
-        # enemy = objects.Object(config.enemy[no], x, y)
-        # global_var.beams.append(enemy)
-        # enemy.render()
-        
-        # #dragon power up
-        # if i % 10 == 0:
-        #     dg_pow_up = objects.Object(config.dg_pow_up, x + 15 , y)
-        #     global_var.dg_power_up.append(dg_pow_up)
-        #     dg_pow_up.render()
-
-        # #magnets
-        # elif i % 5 == 0:
-        #     magnet = objects.Object(config.magnet, x + 10 , y)
-        #     global_var.magnets.append(magnet)
-        #     magnet.render()
-        
-        # i += 1
-        # x += random.randint(20, 30)
-        # if x > global_var.mp.width - 250:
-        #     break
-            
-        # y = random.randint(10, global_var.mp.height-15)
-
-        # #coins
-        # coin = objects.Object(config.coins, x, y)
-        # global_var.coins.append(coin)
-        # coin.render()
-
-
-        # x += random.randint(20, 30)
-        # y = random.randint(10, global_var.mp.height-15)
-        
-        # #boost
-        # boost = objects.Object(config.boost, x, y)
-        # global_var.boosts.append(boost)
-        # boost.render()
-
-        # x += random.randint(20, 50)
-
 def initialize_board():
     init()
     os.system('clear')
     print_board()
+
+def clear_board():
+    os.system('clear')
+
+def brick_gen():
+    for i in range(8):
+        global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
+    for i in range(9):
+        global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
+    global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
+    for i in range(5):
+        global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
+    global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
+
+def drop_power_up(power, y, x):
+    global_var.power_ups.append(objects.PowerUp(config.powerup,x,y, power))
+
+def add_powers(power):
+    flag =0
+    for i in global_var.powers:
+        if i[0] == power:
+            i[1]=time()
+            flag=1
+    if flag==0:
+        if power == 1:
+            global_var.paddle.expand()
+        elif power ==2:
+            global_var.paddle.shrink()
+        elif power ==3:
+            global_var.balls.append(objects.Ball(config.ball,global_var.balls[-1].xget(), global_var.balls[-1].yget(),0))
+        elif power ==4:
+            for ball in global_var.balls:
+                ball.inc_speed()
+        elif power ==5:
+            global_var.paddle.set_thru(1)
+        elif power ==6:
+            global_var.paddle.set_grab(1)
+        global_var.powers.append([power, time()])
+
+
+def check_powers():
+    for i in global_var.powers:
+        print(i[0])
+        if time() - i[1] > config.POWER_TIME:
+            if i[0] == 1 or 2:
+                global_var.paddle.set_width(9)
+            if i[0] == 3:
+                pass
+            if i[0] == 5:
+                global_var.paddle.set_thru(0)
+            if i[0] == 6:
+                global_var.paddle.set_grab(0)
+            
+            global_var.powers.remove(i)
+def default():
+    global_var.powers = []
+    global_var.paddle.set_width(9)
+    global_var.paddle.set_thru(0)
+    global_var.paddle.set_grab(0)

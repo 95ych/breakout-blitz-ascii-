@@ -4,74 +4,56 @@ import random
 import config
 import objects
 from time import time, sleep
-import signal
 from getch import KBHit
-from global_var import paddle, ball, bricks
-#from global_funct import remove_shield, allow_shield, move_board_back, check_speedup_time, move_with_magnet
+from global_var import paddle, balls, bricks, power_ups, mp
+import global_var
+
 import inputs 
 
 
 utilities.initialize_board()
 timetrack = time()
-for brick in bricks:
-    brick.renderex()
+utilities.brick_gen()
+
 
 while True:
     # setting 25 fps
      if time() - timetrack >= 0.1:
         timetrack = time()
-        # global_var.TIME_REM = global_var.TIME_TOTAL - round(time()) + global_var.TIME_BEGUN
-        # if global_var.TIME_REM == 0:
-        #     message = "Time over!"
-        #     break
-        
+        if paddle.get_lives() ==0 or len(bricks)==0:
+            break
         utilities.initialize_board()
         paddle.clear()
-        ball.clear()
+        for ball in balls:
+            ball.clear()
+        for brick in bricks:
+            brick.clear()
+            brick.render()
         inputs.movedin()
         paddle.render()
-        ball.check_collision()
-        ball.ymove(-ball._yspeed)
-        ball.xmove(ball._xspeed)
-        
-
-        # global_funct.gravity(mando)
-        # global_funct.move_bullets(bullets)
-
-        # global_var.mp.magnet_check(global_var.magnets)
-
-        # if time() - global_var.LAST_TIME > global_var.mp.get_speed():
-        #     if mando.get_dragon_flag() == 1:
-        #         mando.change_shape()
-        #     global_funct.mag_reset()
-        #     if global_var.mp.get_magnet_flag() == 1:
-        #         move_with_magnet(mando)
-        #     else:
-        #         move_board_back()
-
-        #     mando.check_collision()
-        #     global_var.LAST_TIME = time()
-        #     dragon.drag_bullets_move(dragon_bullets)
-        #     mando.check_collision()
-
-        # dragon.clear()
-
-        # if global_var.mp.start_index >= 970:
-        #     dragon.set_pos_to_mando(mando)      
-        #     dragon.bullet_col(bullets)
-
-        #     if time() - dragon.get_bullet_time() > dragon.get_bullet_speed():
-        #         dragon.throw_bullet(dragon_bullets)
+        for ball in balls:
+            ball.check_collision()
             
-        # if global_var.mp.start_index == 1000:
-        #     mando.bullet_col(dragon_bullets)
-
-        # mando.render()
-        # dragon.render()
-        # global_funct.print_board()
+            if ball.paddle_grab==0:
+                ball.ymove(ball.ygetspeed())
+                ball.xmove(ball.xgetspeed())
+            else:
+                ball.xset(paddle.xget() + ball.get_x_on_paddle())
+            
+        for power_up in power_ups:
+            power_up.clear()
+            power_up.ymove(power_up._yspeed)
+            power_up.check_collision()
         
-        ball.render()
+        for power_up in power_ups:
+            power_up.render()
+        for ball in balls:
+            ball.render()
         for brick in bricks:
             brick.check_collision()
-        
-            
+        utilities.check_powers()
+utilities.clear_board()
+if paddle.get_lives() ==0:
+    print('Game Over')
+else: print('Yayy you won') 
+print("Time :" + str(int(time() - mp.get_start_time()))+" "*20 +"Score: " + str(paddle._score) )

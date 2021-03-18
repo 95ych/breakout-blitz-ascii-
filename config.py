@@ -7,15 +7,15 @@ from math import pi
 import numpy as np 
 
 MAXY_SPEED = 1
-MAXX_SPEED = 1.2
+MAXX_SPEED = 1
+PADDLE_SPEED = 3
+POWER_TIME = 3
 columns = 70
 rows = 20
 paddle = [['_','_','_','_','_','_']]
 #ball = [['*']]
 ball = [[Back.BLACK+ '*']]
 #ball = np.full((1,1), Fore.RED + "*" + Fore.RESET )
-paddle = np.full((1,9),Back.BLACK+'_' )
+paddle = np.full((1,9),Back.GREEN+'_' )
 brick = np.full((1,5),' ')
-brick1 = np.full((1,5),Back.RED +' ')
-brick2 = np.full((1,5),Back.RED +' ')
-brick3 = np.full((1,5),Back.RED +' ')
+powerup = [['x']]

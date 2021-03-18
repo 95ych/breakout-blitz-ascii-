@@ -2,11 +2,12 @@ import game_screen
 import objects
 import config
 import random
-from numpy import inf
+import utilities
 mp = game_screen.Map()
+balls = []
 bricks = []
+powers = []
+power_ups = []
 paddle = objects.Paddle(config.paddle, 5, config.rows -5)
-ball = objects.Ball(config.ball, 1, config.rows -6)
-for i in range(5):
-    bricks.append(objects.Brick(config.brick,i*6+5,10,random.randint(1,3)))
-bricks.append(objects.Brick(config.brick,4,5,inf))
+ball = objects.Ball(config.ball, 5 + int(paddle.get_width()/2), config.rows -6,1)
+balls.append(ball)

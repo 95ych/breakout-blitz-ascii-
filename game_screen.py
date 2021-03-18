@@ -23,3 +23,6 @@ class Map(object):
                 pr.append(self.matrix[y][x] + Style.RESET_ALL)
             pr.append(Back.WHITE+ " "+Back.RESET)
             print(''.join(pr))
+    
+    def get_start_time(self):
+        return self.timestart
