@@ -30,14 +30,14 @@ def clear_board():
 def brick_gen(level):
     global_var.bricks = []
     if level==1:
-        for i in range(8):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
+        for i in range(2):
+            global_var.bricks.append(objects.Brick(config.brick,i*10+7,10,random.randint(1,3)))
         for i in range(9):
             global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
         global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
         for i in range(5):
             global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
-        global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,5*7+17,10,-inf))
     
     if level==2:
         for i in range(8):
@@ -55,10 +55,11 @@ def drop_power_up(power, y, x):
 
 def add_powers(power):
     flag =0
-    for i in global_var.powers:
-        if i[0] == power:
-            i[1]=time()
-            flag=1
+    if power!=3:
+        for i in global_var.powers:
+            if i[0] == power:
+                i[1]=time()
+                flag=1
     if flag==0:
         if power == 1:
             global_var.paddle.expand()

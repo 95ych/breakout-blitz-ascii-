@@ -121,6 +121,7 @@ class Ball(Object):
                 global_var.balls.remove(self)
                 utilities.default()
         if self._posy <= 0:
+            self._posy = 1
             self._yspeed = -self._yspeed
         if global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
             if self.paddle_grab ==1:
@@ -186,54 +187,67 @@ class Brick(Object):
             for i in range(self._width):
                 for j in range(self._height):
                     global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.WHITE + self._shape[j][i]
+        elif self._lives == -inf:
+            color = random.choice([Back.WHITE,Back.YELLOW,Back.MAGENTA,Back.RED])
+            for i in range(self._width):
+                for j in range(self._height):
+                    global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = color + self._shape[j][i]
         elif self._lives == 0:
             self.clear()
             global_var.paddle.inc_score(1)
             global_var.bricks.remove(self)
-        elif self._lives < 0:
+        elif self._lives < 0 and self._lives > -5:
             self.clear()
             global_var.bricks.remove(self)
         
     def check_collision(self):
-        if self._lives>=0:
-            for ball in global_var.balls:
-                ball_x = int(ball.xget())
-                ball_y = int(ball.yget())
-                for i in range(-1,2):
-                    if ( (self._posy+i,self._posx-1) == (ball_y,ball_x) and ball._xspeed >0): 
-                        if global_var.paddle.get_thru() ==0:
+        for ball in global_var.balls:
+            ball_x = int(ball.xget())
+            ball_y = int(ball.yget())
+            for i in range(-1,2):
+                if ( (self._posy+i,self._posx-1) == (ball_y,ball_x) and ball._xspeed >0): 
+                    if global_var.paddle.get_thru() ==0:
+                        if self._lives > 0:
                             self._lives -= 1
-                            global_var.paddle._score+=1
-                            ball.xreflect()
                         else:
-                            global_var.paddle._score+= self._lives if self._lives < 4 else 5
-                            self._lives =0
-                        
-                        if self._lives==0:
-                            utilities.drop_power_up(self.powerup,self._posy+i,self._posx-1)
-                        
-                    if  ((self._posy+i,self._posx+self._width) == (ball_y,ball_x) and ball._xspeed <0): 
-                        if global_var.paddle.get_thru() ==0:
+                            self._lives = random.randint(0,3)
+                        global_var.paddle._score+=1
+                        ball.xreflect()
+                    else:
+                        global_var.paddle._score+= self._lives if self._lives < 4 else 5
+                        self._lives =0
+                    
+                    if self._lives==0:
+                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx-1)
+                    
+                if  ((self._posy+i,self._posx+self._width) == (ball_y,ball_x) and ball._xspeed <0): 
+                    if global_var.paddle.get_thru() ==0:
+                        if self._lives > 0:
                             self._lives -= 1
-                            ball.xreflect()
                         else:
-                            global_var.paddle._score+= self._lives if self._lives < 4 else 5
-                            self._lives =0
-                        if self._lives==0:
-                            utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width)    
-                
-                for i in range(self._width):
-                    #if global_var.mp.matrix[self._posy][i+self._posx] == ball[0][0]:
-                    if (self._posy+1,i+self._posx) == (ball_y,ball_x) or (self._posy-1,i+self._posx) == (ball_y,ball_x):
-                        if global_var.paddle.get_thru() ==0:
-                            self._lives -= 1
-                            ball.yreflect() 
-                        else:
-                            global_var.paddle.inc_score(self._lives if self._lives < 4 else 5)
-                            self._lives =0
-                        if self._lives==0:
-                            utilities.drop_power_up(self.powerup,self._posy,self._posx+i)
+                            self._lives = random.randint(0,3)
+                        ball.xreflect()
+                    else:
+                        global_var.paddle._score+= self._lives if self._lives < 4 else 5
+                        self._lives =0
+                    if self._lives==0:
+                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width)    
             
+            for i in range(self._width):
+                #if global_var.mp.matrix[self._posy][i+self._posx] == ball[0][0]:
+                if (self._posy+1,i+self._posx) == (ball_y,ball_x) or (self._posy-1,i+self._posx) == (ball_y,ball_x):
+                    if global_var.paddle.get_thru() ==0:
+                        if self._lives > 0:
+                            self._lives -= 1
+                        else:
+                            self._lives = random.randint(0,3)
+                        ball.yreflect() 
+                    else:
+                        global_var.paddle.inc_score(self._lives if self._lives < 4 else 5)
+                        self._lives =0
+                    if self._lives==0:
+                        utilities.drop_power_up(self.powerup,self._posy,self._posx+i)
+        
 class PowerUp(Object):
 
     def __init__(self, character ,x, y, power):
