@@ -69,9 +69,9 @@ def add_powers(power):
 
 def check_powers():
     for i in global_var.powers:
-        #print(i[0])
+        print(i[0])
         if time() - i[1] > config.POWER_TIME:
-            if i[0] == 1 or 2:
+            if i[0] == 1 or i[0] == 2:
                 global_var.paddle.set_width(9)
             if i[0] == 3:
                 pass

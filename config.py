@@ -16,6 +16,6 @@ paddle = [['_','_','_','_','_','_']]
 #ball = [['*']]
 ball = [[Back.BLACK+ '*']]
 #ball = np.full((1,1), Fore.RED + "*" + Fore.RESET )
-paddle = np.full((1,9),Back.GREEN+'_' )
+paddle = np.full((1,9),Back.BLACK+'_' )
 brick = np.full((1,5),' ')
 powerup = [['x']]
