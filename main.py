@@ -12,7 +12,7 @@ import inputs
 utilities.initialize_board()
 timetrack = time()
 utilities.brick_gen(global_var.level)
-
+broken_bricks = 0
 
 while True:
     # setting 10 fps
@@ -21,6 +21,7 @@ while True:
         if global_var.paddle.get_lives() ==0:
             break
         elif len(global_var.bricks) == 0:
+            broken_bricks = 0
             global_var.level+=1
             utilities.brick_gen(global_var.level)
         utilities.initialize_board()

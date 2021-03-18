@@ -5,6 +5,7 @@ import random
 import utilities
 mp = game_screen.Map()
 level = 1
+breakable_bricks = [[1,5],[2,10],[3,15]]
 balls = []
 bricks = []
 powers = []
