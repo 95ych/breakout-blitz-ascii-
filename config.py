@@ -5,7 +5,8 @@ from colorama import init, Fore, Back, Style
 # import objects
 from math import pi
 import numpy as np 
-
+GRAVITY = 0.3
+DAMP = 0.5
 MAXY_SPEED = 1
 MAXX_SPEED = 1
 PADDLE_SPEED = 3

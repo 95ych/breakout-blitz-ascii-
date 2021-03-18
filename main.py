@@ -45,7 +45,9 @@ while True:
             
         for power_up in global_var.power_ups:
             power_up.clear()
+            power_up.yacc(config.GRAVITY)
             power_up.ymove(power_up._yspeed)
+            power_up.xmove(power_up._xspeed)
             power_up.check_collision()
         
         for power_up in global_var.power_ups:

@@ -50,8 +50,8 @@ def brick_gen(level):
         global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
 
 
-def drop_power_up(power, y, x):
-    global_var.power_ups.append(objects.PowerUp(config.powerup,x,y, power))
+def drop_power_up(power, y, x,xspeed,yspeed):
+    global_var.power_ups.append(objects.PowerUp(config.powerup,x,y, power,xspeed,yspeed))
 
 def add_powers(power):
     flag =0

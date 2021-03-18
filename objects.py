@@ -53,10 +53,19 @@ class Object():
     def ygetspeed(self):
         return self._yspeed
 
+    def xacc(self,x):
+        self._xspeed += x
+    
+    def yacc(self,y):
+        self._yspeed += y
+        if self._yspeed > 1:
+            self._yspeed =1
+
     def clear(self):
         for i in range(self._width):
             for j in range(self._height):
                 global_var.mp.matrix[j+int(self._posy)][i+int(self._posx)] = Back.BLACK + " "
+
 
 class Paddle(Object):
 
@@ -139,10 +148,12 @@ class Ball(Object):
                     self._xspeed = config.MAXX_SPEED
                 elif self._xspeed < -config.MAXX_SPEED :
                     self._xspeed = -config.MAXX_SPEED  
-        if self._posx < global_var.mp.start_index + 1:
+        elif self._posx < global_var.mp.start_index + 1:
             self._xspeed = -self._xspeed
-        if self._posx > global_var.mp.start_index + config.columns-1:
+            self._posx = global_var.mp.start_index + 1
+        elif self._posx > global_var.mp.start_index + config.columns-1:
             self._xspeed = -self._xspeed
+            self._posx=global_var.mp.start_index + config.columns-1
     
     def inc_speed(self):
         self._xspeed = config.MAXX_SPEED if self._xspeed > 0 else -config.MAXX_SPEED  
@@ -160,7 +171,7 @@ class Brick(Object):
     def __init__(self, character ,x, y, lives):
         super().__init__(character, x, y)
         #self.powerup = random.choice([0,0,0,0,0,0,0,0,0,0,1,2,2,2,4,4,5,5,3,6,6])
-        self.powerup = random.choice([3])
+        self.powerup = random.choice([1])
         self._lives = lives
     def inc_lives(self,x):
         self._lives+=x
@@ -204,9 +215,11 @@ class Brick(Object):
         for ball in global_var.balls:
             ball_x = int(ball.xget())
             ball_y = int(ball.yget())
+            pt = global_var.paddle.get_thru()
+            dmp = config.DAMP
             for i in range(-1,2):
                 if ( (self._posy+i,self._posx-1) == (ball_y,ball_x) and ball._xspeed >0): 
-                    if global_var.paddle.get_thru() ==0:
+                    if pt ==0:
                         if self._lives > 0:
                             self._lives -= 1
                         else:
@@ -218,10 +231,10 @@ class Brick(Object):
                         self._lives =0
                     
                     if self._lives==0:
-                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx-1)
+                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx-1,(pt-1)*ball._xspeed*dmp,ball._yspeed*dmp)
                     
                 if  ((self._posy+i,self._posx+self._width) == (ball_y,ball_x) and ball._xspeed <0): 
-                    if global_var.paddle.get_thru() ==0:
+                    if pt ==0:
                         if self._lives > 0:
                             self._lives -= 1
                         else:
@@ -231,12 +244,12 @@ class Brick(Object):
                         global_var.paddle._score+= self._lives if self._lives < 4 else 5
                         self._lives =0
                     if self._lives==0:
-                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width)    
+                        utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width,(pt-1)*ball._xspeed*dmp,ball._yspeed*dmp)    
             
             for i in range(self._width):
                 #if global_var.mp.matrix[self._posy][i+self._posx] == ball[0][0]:
                 if (self._posy+1,i+self._posx) == (ball_y,ball_x) or (self._posy-1,i+self._posx) == (ball_y,ball_x):
-                    if global_var.paddle.get_thru() ==0:
+                    if pt ==0:
                         if self._lives > 0:
                             self._lives -= 1
                         else:
@@ -246,13 +259,14 @@ class Brick(Object):
                         global_var.paddle.inc_score(self._lives if self._lives < 4 else 5)
                         self._lives =0
                     if self._lives==0:
-                        utilities.drop_power_up(self.powerup,self._posy,self._posx+i)
+                        utilities.drop_power_up(self.powerup,self._posy,self._posx+i,ball._xspeed*dmp,(pt-1)*ball._yspeed*dmp)
         
 class PowerUp(Object):
 
-    def __init__(self, character ,x, y, power):
+    def __init__(self, character ,x, y, power,xspeed,yspeed):
         super().__init__(character, x, y)
-        self._yspeed = 1
+        self._xspeed = xspeed
+        self._yspeed = yspeed
         self._power = power        
     
     def render(self):    
@@ -276,11 +290,22 @@ class PowerUp(Object):
                 global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = Back.BLACK + 'G'
 
     def check_collision(self):
-        if global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
+        if self._posy >= 17:
+            self.clear()
+            global_var.power_ups.remove(self)
+
+        elif global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
             utilities.add_powers(self._power)
             self.clear()
             global_var.power_ups.remove(self)
+        elif self._posy <= 0:
+            self._posy = 1
+            self._yspeed = -self._yspeed
         
-        elif self._posy >= 17:
-            self.clear()
-            global_var.power_ups.remove(self)
+    
+        elif self._posx < global_var.mp.start_index + 1:
+            self._xspeed = -self._xspeed
+            self._posx = global_var.mp.start_index + 1
+        elif self._posx > global_var.mp.start_index + config.columns-1:
+            self._xspeed = -self._xspeed
+            self._posx=global_var.mp.start_index + config.columns-1
