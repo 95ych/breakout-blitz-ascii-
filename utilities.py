@@ -27,15 +27,17 @@ def initialize_board():
 def clear_board():
     os.system('clear')
 
-def brick_gen():
-    for i in range(8):
-        global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
-    for i in range(9):
-        global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
-    global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
-    for i in range(5):
-        global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
-    global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
+def brick_gen(level):
+    if level==1:
+        for i in range(8):
+            global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
+        for i in range(9):
+            global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
+        global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
+        for i in range(5):
+            global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
+        global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
+
 
 def drop_power_up(power, y, x):
     global_var.power_ups.append(objects.PowerUp(config.powerup,x,y, power))
@@ -65,7 +67,7 @@ def add_powers(power):
 
 def check_powers():
     for i in global_var.powers:
-        print(i[0])
+        #print(i[0])
         if time() - i[1] > config.POWER_TIME:
             if i[0] == 1 or 2:
                 global_var.paddle.set_width(9)
@@ -77,8 +79,10 @@ def check_powers():
                 global_var.paddle.set_grab(0)
             
             global_var.powers.remove(i)
+            
 def default():
     global_var.powers = []
-    global_var.paddle.set_width(9)
+    if global_var.paddle.get_width()!=9:
+        global_var.paddle.set_width(9)
     global_var.paddle.set_thru(0)
     global_var.paddle.set_grab(0)

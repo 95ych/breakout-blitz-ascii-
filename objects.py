@@ -66,6 +66,9 @@ class Paddle(Object):
         self._lives = 3
         self._grab = 0
         self._breakthru =0
+    def get_width(self):
+        return self._width
+
     def set_width(self,x):
         self.clear()
         self._shape =  full((1,x),Back.GREEN +'_' )
@@ -155,9 +158,16 @@ class Brick(Object):
 
     def __init__(self, character ,x, y, lives):
         super().__init__(character, x, y)
-        self.powerup = random.choice([0,0,0,0,0,1,2,2,2,4,4,5,5,3,6,6])
-        #self.powerup = random.choice([1])
+        #self.powerup = random.choice([0,0,0,0,0,0,0,0,0,0,1,2,2,2,4,4,5,5,3,6,6])
+        self.powerup = random.choice([3])
         self._lives = lives
+    def inc_lives(self,x):
+        self._lives+=x
+    def get_lives(self):
+        return self._lives
+    def set_lives(self,x):
+        self._lives = x
+
     
     def render(self):    
         if self._lives == 3:
@@ -180,12 +190,17 @@ class Brick(Object):
             self.clear()
             global_var.paddle.inc_score(1)
             global_var.bricks.remove(self)
+        elif self._lives < 0:
+            self.clear()
+            global_var.bricks.remove(self)
         
     def check_collision(self):
-        if self._lives!=0:
+        if self._lives>=0:
             for ball in global_var.balls:
+                ball_x = int(ball.xget())
+                ball_y = int(ball.yget())
                 for i in range(-1,2):
-                    if (global_var.mp.matrix[self._posy+i][self._posx-1] == config.ball[0][0] and ball._xspeed >0): 
+                    if ( (self._posy+i,self._posx-1) == (ball_y,ball_x) and ball._xspeed >0): 
                         if global_var.paddle.get_thru() ==0:
                             self._lives -= 1
                             global_var.paddle._score+=1
@@ -197,24 +212,22 @@ class Brick(Object):
                         if self._lives==0:
                             utilities.drop_power_up(self.powerup,self._posy+i,self._posx-1)
                         
-                    if  (global_var.mp.matrix[self._posy+i][self._posx+self._width] == config.ball[0][0] and ball._xspeed <0): 
+                    if  ((self._posy+i,self._posx+self._width) == (ball_y,ball_x) and ball._xspeed <0): 
                         if global_var.paddle.get_thru() ==0:
                             self._lives -= 1
-                            
                             ball.xreflect()
                         else:
                             global_var.paddle._score+= self._lives if self._lives < 4 else 5
                             self._lives =0
                         if self._lives==0:
-                            utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width)
-                        
+                            utilities.drop_power_up(self.powerup,self._posy+i,self._posx+self._width)    
+                
                 for i in range(self._width):
                     #if global_var.mp.matrix[self._posy][i+self._posx] == ball[0][0]:
-                    if global_var.mp.matrix[self._posy+1][i+self._posx] == config.ball[0][0] or global_var.mp.matrix[self._posy-1][i+self._posx] == config.ball[0][0]:
+                    if (self._posy+1,i+self._posx) == (ball_y,ball_x) or (self._posy-1,i+self._posx) == (ball_y,ball_x):
                         if global_var.paddle.get_thru() ==0:
                             self._lives -= 1
-                            
-                            ball._yspeed = -ball._yspeed 
+                            ball.yreflect() 
                         else:
                             global_var.paddle.inc_score(self._lives if self._lives < 4 else 5)
                             self._lives =0

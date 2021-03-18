@@ -1,5 +1,4 @@
 from getch import KBHit
-from global_var import paddle, balls
 import global_var
 import utilities
 import config
@@ -13,30 +12,21 @@ def movedin():
     char = kb.getinput()
 
     if char == 'd':
-        if paddle.xget() <= global_var.mp.start_index + config.columns  -3- paddle.get_width() and paddle.xget() <= 1090:
-            paddle.xmove(config.PADDLE_SPEED)
+        if global_var.paddle.xget() <= global_var.mp.start_index + config.columns  -3- global_var.paddle.get_width() and global_var.paddle.xget() <= 1090:
+            global_var.paddle.xmove(config.PADDLE_SPEED)
             
-        elif paddle.xget() >= global_var.mp.start_index + config.columns  -3- paddle.get_width() and paddle.xget() <= global_var.mp.start_index + config.columns -1- paddle.get_width(): 
-            paddle.xmove(1)
+        elif global_var.paddle.xget() >= global_var.mp.start_index + config.columns  -3- global_var.paddle.get_width() and global_var.paddle.xget() <= global_var.mp.start_index + config.columns -1- global_var.paddle.get_width(): 
+            global_var.paddle.xmove(1)
             
     if char == 'a':
-        if paddle.xget() > global_var.mp.start_index + 1:
-            paddle.xmove(-config.PADDLE_SPEED)
+        if global_var.paddle.xget() > global_var.mp.start_index + 1:
+            global_var.paddle.xmove(-config.PADDLE_SPEED)
             
     if char == ' ':
-        for ball in balls:
+        for ball in global_var.balls:
             ball.paddle_grab = 0
 
-    # if char == 'w':
-    #     if mando.yget() >= 5:
-    #         mando.yset(-1)
-    #         mando.set_air_pos(mando.yget())
-    #         mando.set_air_time(time())
 
-    # if char == ' ' and mando.get_shield_allow() == 1:
-    #     mando.set_shield_allow(0)
-    #     mando.set_shield_time(time())
-    #     mando.set_shield(1)
 
     if char == 'q':
         quit()

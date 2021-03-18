@@ -4,6 +4,7 @@ import config
 import random
 import utilities
 mp = game_screen.Map()
+level = 1
 balls = []
 bricks = []
 powers = []
