@@ -10,5 +10,5 @@ bricks = []
 powers = []
 power_ups = []
 paddle = objects.Paddle(config.paddle, 5, config.rows -5)
-ball = objects.Ball(config.ball, 5 + int(paddle.get_width()/2), config.rows -6,1)
+ball = objects.Ball(config.ball, 5 + int(paddle.get_width()/2), config.rows -6,1,0,1)
 balls.append(ball)

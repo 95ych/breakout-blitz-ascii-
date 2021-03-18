@@ -102,10 +102,10 @@ class Paddle(Object):
 
 class Ball(Object):
 
-    def __init__(self, character ,x, y,grab):
+    def __init__(self, character ,x, y,grab,xspeed,yspeed):
         super().__init__(character, x, y)
-        self._xspeed = 0
-        self._yspeed = 1
+        self._xspeed = xspeed
+        self._yspeed = yspeed
         self.paddle_grab = grab
         self._x_on_paddle = int(global_var.paddle.get_width()/2)
 

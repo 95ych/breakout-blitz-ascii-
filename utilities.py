@@ -54,7 +54,9 @@ def add_powers(power):
         elif power ==2:
             global_var.paddle.shrink()
         elif power ==3:
-            global_var.balls.append(objects.Ball(config.ball,global_var.balls[-1].xget(), global_var.balls[-1].yget(),0))
+            tempballs = global_var.balls.copy()
+            for ball in tempballs:
+                global_var.balls.append(objects.Ball(config.ball,ball.xget(), ball.yget(),0,-ball._xspeed,-ball._yspeed))
         elif power ==4:
             for ball in global_var.balls:
                 ball.inc_speed()
@@ -79,7 +81,7 @@ def check_powers():
                 global_var.paddle.set_grab(0)
             
             global_var.powers.remove(i)
-            
+
 def default():
     global_var.powers = []
     if global_var.paddle.get_width()!=9:
