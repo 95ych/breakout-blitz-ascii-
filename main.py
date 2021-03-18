@@ -4,8 +4,8 @@ import random
 import config
 import objects
 from time import time, sleep
-from getch import KBHit
-import global_var
+#from getch import KBHit
+
 
 import inputs 
 
@@ -16,7 +16,7 @@ broken_bricks = 0
 
 while True:
     # setting 10 fps
-     if time() - timetrack >= 0.1:
+    if time() - timetrack >= 0.1 and global_var.pause==0:
         timetrack = time()
         if global_var.paddle.get_lives() ==0:
             break
@@ -57,6 +57,8 @@ while True:
         for brick in global_var.bricks:
             brick.check_collision()
         utilities.check_powers()
+    elif global_var.pause:
+        inputs.movedin()
 utilities.clear_board()
 if global_var.paddle.get_lives() ==0:
     print('Game Over')

@@ -25,8 +25,16 @@ def movedin():
     if char == ' ':
         for ball in global_var.balls:
             ball.paddle_grab = 0
+    
+    if char == 'p':
+        global_var.pause= 0 if global_var.pause==1 else 1
+    
+    if char == 'q':
+        quit()
 
-
+def paused():
+    if char == 'p':
+        global_var.pause= 0 if global_var.pause==1 else 1
 
     if char == 'q':
         quit()

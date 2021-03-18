@@ -4,7 +4,8 @@ import termios, tty, time
 from colorama import init, Fore, Back, Style
 # import objects
 from math import pi
-import numpy as np 
+import numpy as np
+TIME_ATTACK = 3
 GRAVITY = 0.3
 DAMP = 0.5
 MAXY_SPEED = 1
