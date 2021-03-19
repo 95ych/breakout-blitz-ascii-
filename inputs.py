@@ -29,6 +29,9 @@ def movedin():
     if char == 'p':
         global_var.pause= 0 if global_var.pause==1 else 1
     
+    if char == 'k':
+        global_var.level+=1
+    
     if char == 'q':
         quit()
 

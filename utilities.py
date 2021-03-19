@@ -28,26 +28,37 @@ def clear_board():
     os.system('clear')
 
 def brick_gen(level):
+    for brick in global_var.bricks:
+        brick.clear()
+    for ball in global_var.balls:
+        ball.clear()
     global_var.bricks = []
     if level==1:
-        for i in range(2):
-            global_var.bricks.append(objects.Brick(config.brick,i*10+7,10,random.randint(1,3)))
-        for i in range(9):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
-        global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
-        for i in range(5):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
-        global_var.bricks.append(objects.Brick(config.brick,5*7+17,10,-inf))
+        global_var.bricks.append(objects.Brick(config.brick,28,10,-inf))
+        global_var.bricks.append(objects.Brick(config.brick,35,10,-inf))
+            
+        for i in range(1,4):
+            global_var.bricks.append(objects.Brick(config.brick,28-i*8,10-i*2,random.randint(1,2)))
+            global_var.bricks.append(objects.Brick(config.brick,35+i*8,10-i*2,random.randint(1,2)))    
+        global_var.bricks.append(objects.Brick(config.brick,25,6,inf))
+        global_var.bricks.append(objects.Brick(config.brick,38,6,inf))
     
     if level==2:
-        for i in range(8):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
-        for i in range(9):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+3,8,random.randint(1,3)))
-        global_var.bricks.append(objects.Brick(config.brick,10,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,2,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,2,15,inf))
+        global_var.bricks.append(objects.Brick(config.brick,9,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,9,15,inf))
+        # for i in range(4):
+        #     global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
+        for i in range(6):
+            global_var.bricks.append(objects.Brick(config.brick,i*7+13,10,-inf))
+        
         for i in range(5):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+17,5,random.randint(1,3)))
-        global_var.bricks.append(objects.Brick(config.brick,5*7+17,5,inf))
+            global_var.bricks.append(objects.Brick(config.brick,i*7+18,5,2))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,5,inf))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,15,inf))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,15,inf))
 
 
 def drop_power_up(power, y, x,xspeed,yspeed):
@@ -81,7 +92,6 @@ def add_powers(power):
 
 def check_powers():
     for i in global_var.powers:
-        print(global_var.pause)
         if time() - i[1] > config.POWER_TIME:
             if i[0] == 1 or i[0] == 2:
                 global_var.paddle.set_width(9)
@@ -96,6 +106,7 @@ def check_powers():
 
 def default():
     global_var.powers = []
+    global_var.balls = [objects.Ball(config.ball, global_var.paddle.xget() + random.randint(1,int(global_var.paddle.get_width()/2)), config.rows -4,1,0,1)]
     if global_var.paddle.get_width()!=9:
         global_var.paddle.set_width(9)
     global_var.paddle.set_thru(0)
