@@ -464,6 +464,7 @@ class Ufo(Object):
                     ball.ysetspeed(abs(ball.ygetspeed()))
                     self.drop_bombs(0.5)
         self.inc_health(-damage)
+        global_var.paddle.inc_score(damage)
         if self._health <= 30 and self._shield==0:
             utilities.spawn_defence()
             self._shield=1
