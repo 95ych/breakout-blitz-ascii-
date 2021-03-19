@@ -7,6 +7,8 @@ import objects
 from time import time
 from numpy import inf
 
+
+
 def create_header():
     print("\033[%d;%dH" % (0, 0), end='')
     #print("\033[2;1H" + Fore.WHITE + Back.BLUE + Style.BRIGHT)
@@ -27,39 +29,63 @@ def initialize_board():
 def clear_board():
     os.system('clear')
 
+def spawn_boss():
+    global_var.bosses.append(objects.Ufo(config.ufo, global_var.paddle.xget() , 4))
+    spawn_defence()
+
+def spawn_bomb(x,y):
+    if time() - global_var.last_bomb > 0.2:
+        global_var.last_bomb = time()
+        global_var.bombs.append(objects.Bomb(config.bomb, x,y))
+        global_var.bombs.append(objects.Bomb(config.bomb, x+7,y))
+
+def spawn_defence():
+    for brick in global_var.bricks:
+        if brick.yget()==8:
+            brick.clear()
+            global_var.bricks.remove(self)
+
+    for i in range(16):
+            global_var.bricks.append(objects.Brick(config.brick,i*5,8,1,[0]))
+
 def brick_gen(level):
     for brick in global_var.bricks:
         brick.clear()
     for ball in global_var.balls:
         ball.clear()
     global_var.bricks = []
-    if level==1:
-        global_var.bricks.append(objects.Brick(config.brick,28,10,-inf))
-        global_var.bricks.append(objects.Brick(config.brick,35,10,-inf))
-            
-        for i in range(1,4):
-            global_var.bricks.append(objects.Brick(config.brick,28-i*8,10-i*2,random.randint(1,2)))
-            global_var.bricks.append(objects.Brick(config.brick,35+i*8,10-i*2,random.randint(1,2)))    
-        global_var.bricks.append(objects.Brick(config.brick,25,6,inf))
-        global_var.bricks.append(objects.Brick(config.brick,38,6,inf))
     
-    if level==2:
-        global_var.bricks.append(objects.Brick(config.brick,2,5,inf))
-        global_var.bricks.append(objects.Brick(config.brick,2,15,inf))
-        global_var.bricks.append(objects.Brick(config.brick,9,5,inf))
-        global_var.bricks.append(objects.Brick(config.brick,9,15,inf))
-        # for i in range(4):
-        #     global_var.bricks.append(objects.Brick(config.brick,i*7+7,10,random.randint(1,3)))
+    if level==1:
+        global_var.bricks.append(objects.Brick(config.brick,2,5,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,2,15,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,9,5,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,9,15,inf,config.prob_distr))
         for i in range(6):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+13,10,-inf))
+            global_var.bricks.append(objects.Brick(config.brick,i*7+13,10,-inf,config.prob_distr))
         
         for i in range(5):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+18,5,2))
-        global_var.bricks.append(objects.Brick(config.brick,39+17,5,inf))
-        global_var.bricks.append(objects.Brick(config.brick,39+24,5,inf))
-        global_var.bricks.append(objects.Brick(config.brick,39+17,15,inf))
-        global_var.bricks.append(objects.Brick(config.brick,39+24,15,inf))
+            global_var.bricks.append(objects.Brick(config.brick,i*7+18,5,2,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,5,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,5,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,15,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,15,inf,config.prob_distr))
 
+    elif level==2:
+        global_var.bricks.append(objects.Brick(config.brick,28,10,-inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,35,10,-inf,config.prob_distr))
+            
+        for i in range(1,4):
+            r = random.randint(2,3)
+            global_var.bricks.append(objects.Brick(config.brick,28-i*8,10-i*2,r,config.prob_distr))
+            global_var.bricks.append(objects.Brick(config.brick,35+i*8,10-i*2,r,config.prob_distr))    
+        for i in range(1,3):
+            global_var.bricks.append(objects.Brick(config.brick,28-i*8,10+i*2,1,config.prob_distr))
+            global_var.bricks.append(objects.Brick(config.brick,35+i*8,10+i*2,1,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,25,6,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,38,6,inf,config.prob_distr))
+    elif level==3:
+        spawn_boss()
+    
 
 def drop_power_up(power, y, x,xspeed,yspeed):
     global_var.power_ups.append(objects.PowerUp(config.powerup,x,y, power,xspeed,yspeed))
@@ -91,6 +117,7 @@ def add_powers(power):
 
 
 def check_powers():
+    print(len(global_var.bombs))
     for i in global_var.powers:
         if time() - i[1] > config.POWER_TIME:
             if i[0] == 1 or i[0] == 2:
@@ -106,8 +133,9 @@ def check_powers():
 
 def default():
     global_var.powers = []
-    global_var.balls = [objects.Ball(config.ball, global_var.paddle.xget() + random.randint(1,int(global_var.paddle.get_width()/2)), config.rows -4,1,0,1)]
+    global_var.balls = [objects.Ball(config.ball, global_var.paddle.xget() , config.rows -4,1,0,1)]
     if global_var.paddle.get_width()!=9:
         global_var.paddle.set_width(9)
     global_var.paddle.set_thru(0)
     global_var.paddle.set_grab(0)
+

@@ -15,6 +15,8 @@ utilities.brick_gen(global_var.level)
 broken_bricks = 0
 level_start = timetrack
 current_level = global_var.level
+win=0
+drop= timetrack
 while True:
      
     # setting 10 fps
@@ -22,7 +24,7 @@ while True:
         bpc=0 # ball-paddle-collision
         
         timetrack = time()
-        if global_var.paddle.get_lives() == 0 or len(global_var.bricks) == 0:
+        if global_var.paddle.get_lives() == 0 or win:
             break
         
         if broken_bricks >= global_var.breakable_bricks[current_level-1]:
@@ -32,8 +34,11 @@ while True:
             broken_bricks = 0
             current_level = global_var.level
             level_start = timetrack
-            utilities.brick_gen(global_var.level)
-            utilities.default()
+            if current_level>3:
+                win=1
+            else:
+                utilities.brick_gen(global_var.level)
+                utilities.default()
         
         utilities.initialize_board()
         
@@ -41,8 +46,25 @@ while True:
         for ball in global_var.balls:
             ball.clear()
         
+
+        for boss in global_var.bosses:
+            boss.clear()
+            if timetrack - drop <= config.shoot_time:
+                boss.drop_bombs()
+
+            boss.xset(global_var.paddle.xget()+1)
+            boss.check_collision()
+            boss.render()
+            if boss.get_health() < 0:
+                win=1
         
-        inputs.movedin()
+        
+
+        dirc = inputs.movedin() #record direction of paddle
+        if dirc!=global_var.cd:
+            global_var.cd = dirc
+            drop=timetrack
+
         global_var.paddle.render()
         
         for ball in global_var.balls:
@@ -71,6 +93,14 @@ while True:
         
         for power_up in global_var.power_ups:
             power_up.render()
+        
+        for bomb in global_var.bombs:
+            bomb.clear()
+            bomb.ymove(1)
+            bomb.check_collision()
+          
+        for bomb in global_var.bombs: 
+            bomb.render()
         for ball in global_var.balls:
             ball.render()
         for brick in global_var.bricks:

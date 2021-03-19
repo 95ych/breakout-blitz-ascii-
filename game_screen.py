@@ -17,6 +17,9 @@ class Map(object):
 
     def render(self):
         print("Time :" + str(int(time.time() - self.timestart))+" "*12+"Lives: "+str(global_var.paddle._lives)+" "*12+"Level: "+str(global_var.level)+" "*12 +"Score: " + str(global_var.paddle._score) )
+        for boss in global_var.bosses:
+            h = boss.get_health()
+            print("Boss :"+"["+(Back.GREEN+' ')*h +(Back.BLACK+' ')*(50-h)+Back.BLACK+"]")
         print(Back.WHITE+" "*(config.columns+2)+ Back.RESET)
         for y in range(self.height):
             pr = [Back.WHITE+ " "]
