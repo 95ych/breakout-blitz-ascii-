@@ -22,7 +22,7 @@ class Map(object):
             print("Boss :"+"["+(Back.GREEN+' ')*h +(Back.BLACK+' ')*(50-h)+Back.BLACK+"]")
         print(Back.WHITE+" "*(config.columns+2)+ Back.RESET)
         for y in range(self.height):
-            pr = [Back.WHITE+ " "]
+            pr = [Back.WHITE+ " "+Back.RESET]
             for x in range(self.start_index, self.start_index + config.columns):    
                 pr.append(self.matrix[y][x] + Style.RESET_ALL)
             pr.append(Back.WHITE+ " "+Back.RESET)

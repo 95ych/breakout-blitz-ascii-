@@ -31,10 +31,16 @@ def clear_board():
 
 def spawn_boss():
     global_var.bosses.append(objects.Ufo(config.ufo, global_var.paddle.xget() , 4))
-    spawn_defence()
 
-def spawn_bomb(x,y):
-    if time() - global_var.last_bomb > 0.2:
+def spawn_lasers(x,y):
+    if time() - global_var.last_laser > 0.3:
+        global_var.last_laser = time()
+        global_var.lasers.append(objects.Laser(config.laser, x,y))
+        global_var.lasers.append(objects.Laser(config.laser, x+global_var.paddle.get_width()-1,y))
+
+
+def spawn_bomb(x,y,t):
+    if time() - global_var.last_bomb > t:
         global_var.last_bomb = time()
         global_var.bombs.append(objects.Bomb(config.bomb, x,y))
         global_var.bombs.append(objects.Bomb(config.bomb, x+7,y))
@@ -43,7 +49,7 @@ def spawn_defence():
     for brick in global_var.bricks:
         if brick.yget()==8:
             brick.clear()
-            global_var.bricks.remove(self)
+            global_var.bricks.remove(brick)
 
     for i in range(16):
             global_var.bricks.append(objects.Brick(config.brick,i*5,8,1,[0]))
@@ -57,18 +63,18 @@ def brick_gen(level):
     
     if level==1:
         global_var.bricks.append(objects.Brick(config.brick,2,5,inf,config.prob_distr))
-        global_var.bricks.append(objects.Brick(config.brick,2,15,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,2,12,inf,config.prob_distr))
         global_var.bricks.append(objects.Brick(config.brick,9,5,inf,config.prob_distr))
-        global_var.bricks.append(objects.Brick(config.brick,9,15,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,9,12,inf,config.prob_distr))
         for i in range(6):
-            global_var.bricks.append(objects.Brick(config.brick,i*7+13,10,-inf,config.prob_distr))
+            global_var.bricks.append(objects.Brick(config.brick,i*7+15,10,-inf,config.prob_distr))
         
         for i in range(5):
             global_var.bricks.append(objects.Brick(config.brick,i*7+18,5,2,config.prob_distr))
         global_var.bricks.append(objects.Brick(config.brick,39+17,5,inf,config.prob_distr))
         global_var.bricks.append(objects.Brick(config.brick,39+24,5,inf,config.prob_distr))
-        global_var.bricks.append(objects.Brick(config.brick,39+17,15,inf,config.prob_distr))
-        global_var.bricks.append(objects.Brick(config.brick,39+24,15,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,12,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,12,inf,config.prob_distr))
 
     elif level==2:
         global_var.bricks.append(objects.Brick(config.brick,28,10,-inf,config.prob_distr))
@@ -85,6 +91,12 @@ def brick_gen(level):
         global_var.bricks.append(objects.Brick(config.brick,38,6,inf,config.prob_distr))
     elif level==3:
         spawn_boss()
+        global_var.bricks.append(objects.Brick(config.brick,25,10,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,38,10,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,2,12,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,9,12,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+17,12,inf,config.prob_distr))
+        global_var.bricks.append(objects.Brick(config.brick,39+24,12,inf,config.prob_distr))
     
 
 def drop_power_up(power, y, x,xspeed,yspeed):
@@ -113,11 +125,12 @@ def add_powers(power):
             global_var.paddle.set_thru(1)
         elif power ==6:
             global_var.paddle.set_grab(1)
+        elif power ==7:
+            global_var.paddle.set_laser(1)
         global_var.powers.append([power, time()])
 
 
 def check_powers():
-    print(len(global_var.bombs))
     for i in global_var.powers:
         if time() - i[1] > config.POWER_TIME:
             if i[0] == 1 or i[0] == 2:
@@ -128,7 +141,8 @@ def check_powers():
                 global_var.paddle.set_thru(0)
             if i[0] == 6:
                 global_var.paddle.set_grab(0)
-            
+            if i[0] == 7:
+                global_var.paddle.set_laser(0)
             global_var.powers.remove(i)
 
 def default():
@@ -138,4 +152,5 @@ def default():
         global_var.paddle.set_width(9)
     global_var.paddle.set_thru(0)
     global_var.paddle.set_grab(0)
+    global_var.paddle.set_laser(0)
 

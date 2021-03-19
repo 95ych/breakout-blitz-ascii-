@@ -81,8 +81,27 @@ class Paddle(Object):
         self._lives = 3
         self._grab = 0
         self._breakthru =0
+        self._laser = 0
+    
+    def render(self):
+        if self._laser==0:
+            for i in range(self._width):
+                for j in range(self._height):
+                    if global_var.mp.matrix[int(self._posy)][i+int(self._posx)] == Back.BLACK + " ":
+                        global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = self._shape[0][i]
+        else:
+            for i in [0,self._width-1]:
+                if global_var.mp.matrix[int(self._posy)][i+int(self._posx)] == Back.BLACK + " ":
+                        global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = Back.BLACK + "^"
+            for i in range(1,self._width-1):
+                    if global_var.mp.matrix[int(self._posy)][i+int(self._posx)] == Back.BLACK + " ":
+                        global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = self._shape[0][i]
+            utilities.spawn_lasers(self._posx, self._posy)
+            
     def get_width(self):
         return self._width
+    def set_laser(self,x):
+        self._laser=x
 
     def set_width(self,x):
         self.clear()
@@ -112,8 +131,10 @@ class Paddle(Object):
 
     def get_thru(self):
         return self._breakthru
+    
     def get_lives(self):
         return self._lives
+    
     def set_lives(self,x):
         self._lives = x
 
@@ -125,7 +146,7 @@ class Ball(Object):
         self._yspeed = yspeed
         self.paddle_grab = grab
         self._x_on_paddle = random.randint(1,global_var.paddle.get_width()-1)
-        self._x_on_paddle = int(global_var.paddle.get_width()/2)
+        #self._x_on_paddle = int(global_var.paddle.get_width()/2)
 
     def check_collision(self):
         collide = 0
@@ -144,7 +165,7 @@ class Ball(Object):
         if self._posy <= 0:
             self._posy = 1
             self._yspeed = -self._yspeed
-        if global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
+        if global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0] or global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == Back.BLACK +"^":
             if self.paddle_grab ==1:
                 pass
 
@@ -314,13 +335,16 @@ class PowerUp(Object):
         elif self._power == 6:
             for i in range(self._width):
                 global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = Back.BLACK + 'G'
+        elif self._power == 7:
+            for i in range(self._width):
+                global_var.mp.matrix[int(self._posy)][i+int(self._posx)] = Back.BLACK + 'L'
 
     def check_collision(self):
         if self._posy >= config.rows-1:
             self.clear()
             global_var.power_ups.remove(self)
 
-        elif global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
+        elif global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0] or global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == Back.BLACK +"^":
             utilities.add_powers(self._power)
             self.clear()
             global_var.power_ups.remove(self)
@@ -346,10 +370,37 @@ class Bomb(Object):
         if self._posy >= config.rows-2:
             self.clear()
             global_var.bombs.remove(self)
-        elif global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0]:
+        elif global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == config.paddle[0][0] or global_var.mp.matrix[int(self._posy)+1][int(self._posx)] == Back.BLACK +"^":
             self.clear()
             global_var.bombs.remove(self)
             global_var.paddle.inc_lives(-1)
+
+class Laser(Object):
+
+    def __init__(self, character ,x, y):
+        super().__init__(character, x, y)
+        self._yspeed = -1
+
+    def check_collision(self):
+        if self._posy <= 2:
+            self.clear()
+            global_var.lasers.remove(self)
+            return 0
+        for brick in global_var.bricks:
+            if int(self._posy) == brick.yget():
+                if int(self._posx)>= brick.xget() and int(self._posx)<brick.xget()+brick.get_width():
+                    self.clear()
+                    global_var.lasers.remove(self)
+                    if brick.get_lives()>0:
+                        brick.inc_lives(-1)
+                    else:
+                        brick.set_lives(random.randint(0,2))
+                    if brick.get_lives()==0:
+                        global_var.paddle.inc_score(1)
+                        utilities.drop_power_up(brick.powerup,self._posy,self._posx,0,-1)
+                        return 1
+        return 0
+             
         
 
 class Ufo(Object):
@@ -357,9 +408,10 @@ class Ufo(Object):
     def __init__(self, character ,x, y):
         super().__init__(character, x, y)
         self._health = 50
+        self._shield = 0
     
-    def drop_bombs(self):
-        utilities.spawn_bomb(self._posx, self._posy+self._height)
+    def drop_bombs(self,t):
+        utilities.spawn_bomb(self._posx, self._posy+self._height,t)
         
     def inc_health(self,x):
         self._health += x
@@ -378,16 +430,17 @@ class Ufo(Object):
             
             for i in range(3):
                 if int(self._posx) <= (ball_x) and int(self._posx+self._width) > (ball_x) and int(self._posy) > (ball_y): #when ball is above ufo
-                    self.drop_bombs()
+                    self.drop_bombs(0.2)
             for i in range(3):
                 if ( (int(self._posy+i),int(self._posx-1)) == (ball_y,ball_x) ): 
                     damage += 2
                     ball.xsetspeed(-abs(ball.xgetspeed()))
-                                    
+                    self.drop_bombs(0.5)                
                 if  ((int(self._posy+i),int(self._posx+self._width)) == (ball_y,ball_x) ): 
                     damage += 2
                     ball.xsetspeed(+abs(ball.xgetspeed()))
-            
+                    self.drop_bombs(0.5)
+
             for i in [0,1,6,7]:
                 #if global_var.mp.matrix[self._posy][i+self._posx] == ball[0][0]:
                 if (int(self._posy),int(i+self._posx)) == (ball_y,ball_x):
@@ -403,12 +456,21 @@ class Ufo(Object):
                 if (int(self._posy+3),int(i+self._posx+2)) == (ball_y,ball_x):
                     damage += 4
                     ball.ysetspeed(abs(ball.ygetspeed()))
-            
+                    self.drop_bombs(0.3)
+
             for i in [0,1,2,5,6,7]:
                 if (int(self._posy+2),int(i+self._posx)) == (ball_y,ball_x):
                     damage += 2
                     ball.ysetspeed(abs(ball.ygetspeed()))
-            
+                    self.drop_bombs(0.5)
         self.inc_health(-damage)
+        if self._health <= 30 and self._shield==0:
+            utilities.spawn_defence()
+            self._shield=1
+
+        elif self._health <= 10 and self._shield==1:
+            utilities.spawn_defence()
+            self._shield=2
+
         return damage
             

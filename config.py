@@ -5,7 +5,7 @@ from colorama import init, Fore, Back, Style
 # import objects
 from math import pi
 import numpy as np
-TIME_ATTACK = 3
+TIME_ATTACK = 20
 GRAVITY = 0.3
 DAMP = 0.5
 MAXY_SPEED = 1
@@ -25,7 +25,8 @@ ufo = [[Back.BLACK+' ',Back.BLACK+' ',Back.CYAN+' ',Back.CYAN+' ',Back.CYAN+' ',
 shoot_time = 0.2
 bomb = [[Fore.RED+'x']]
 paddle = np.full((1,9),Back.GREEN+'_' )
-
+laser = [[Fore.MAGENTA+'|']]
 brick = np.full((1,5),' ')
-prob_distr = [0,0,0,0,0,0,0,0,0,0,1,2,2,2,4,4,5,5,3,6,6]
+prob_distr = [1,1,2,2,2,4,4,5,5,3,6,6,7,7,7,7]
+#prob_distr = [7]
 powerup = [['x']]

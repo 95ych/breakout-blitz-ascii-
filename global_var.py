@@ -6,12 +6,14 @@ import utilities
 from time import time
 mp = game_screen.Map()
 last_bomb = 0
+last_laser = 0
 cd = 1
 level = 1
 pause = 0
 breakable_bricks = [11,12,15]
 bosses = []
 bombs = []
+lasers = []
 balls = []
 bricks = []
 powers = []

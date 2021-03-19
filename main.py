@@ -38,6 +38,12 @@ while True:
                 win=1
             else:
                 utilities.brick_gen(global_var.level)
+                for i in global_var.lasers:
+                    i.clear()
+                for i in global_var.power_ups:
+                    i.clear()
+                global_var.lasers = []
+                global_var.power_ups = []
                 utilities.default()
         
         utilities.initialize_board()
@@ -50,7 +56,7 @@ while True:
         for boss in global_var.bosses:
             boss.clear()
             if timetrack - drop <= config.shoot_time:
-                boss.drop_bombs()
+                boss.drop_bombs(0.3)
 
             boss.xset(global_var.paddle.xget()+1)
             boss.check_collision()
@@ -76,6 +82,14 @@ while True:
             else:
                 ball.xset(global_var.paddle.xget() + ball.get_x_on_paddle())
         
+        for laser in global_var.lasers:
+            laser.clear()
+            laser.ymove(-1)
+            broken_bricks+= laser.check_collision()
+          
+        for laser in global_var.lasers: 
+            laser.render()
+        
         for brick in global_var.bricks:
             brick.clear()
             if timetrack-level_start>config.TIME_ATTACK and bpc:
@@ -94,6 +108,8 @@ while True:
         for power_up in global_var.power_ups:
             power_up.render()
         
+        
+
         for bomb in global_var.bombs:
             bomb.clear()
             bomb.ymove(1)
@@ -101,12 +117,15 @@ while True:
           
         for bomb in global_var.bombs: 
             bomb.render()
+        
+        
         for ball in global_var.balls:
             ball.render()
         for brick in global_var.bricks:
             broken_bricks += brick.check_collision()
-            print(broken_bricks)
         utilities.check_powers()
+
+        
     
     elif global_var.pause:
         inputs.movedin()
